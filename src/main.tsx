@@ -1,13 +1,13 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import { createBrowserRouter, RouterProvider, Route } from 'react-router-dom'
-import App from './App'
-import Home from './routes/Home'
-import Recipes from './routes/Recipes'
-import RecipeEditor from './routes/RecipeEditor'
-import Ingredients from './routes/Ingredients'
-import Containers from './routes/Containers'
-import './index.css'
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { createBrowserRouter, RouterProvider, Route } from 'react-router-dom';
+import App from './App';
+import Home from './routes/Home';
+import Recipes from './routes/Recipes';
+import RecipeEditor, {recipeLoader} from './routes/RecipeEditor';
+import Ingredients from './routes/Ingredients';
+import Containers from './routes/Containers';
+import './index.css';
 
 const router = createBrowserRouter([
   {
@@ -24,6 +24,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/recipes/edit/:recipeName",
+        loader: recipeLoader,
         element: <RecipeEditor />,
       },
       {
@@ -36,10 +37,10 @@ const router = createBrowserRouter([
       },
     ],
   }
-])
+]);
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <RouterProvider router={router}/>
   </React.StrictMode>
-)
+);

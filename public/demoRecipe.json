@@ -1,0 +1,31 @@
+{
+    "name": "Demo Recipe 1",
+    "ingredients": [
+        {
+            "name": "Alpha GPC",
+            "quantity": 200,
+            "unit": "mg"
+        },
+        {
+            "name": "Creatine",
+            "quantity": 400,
+            "unit": "mg"
+        },
+        {
+            "name": "L-Theanine",
+            "quantity": 100,
+            "unit": "mg"
+        },
+        {
+            "name": "Sugar",
+            "quantity": 50,
+            "unit": "mg"
+        }
+    ],
+    "containers": [
+        {
+            "name": "00 Capsule",
+            "quantity": 2
+        }
+    ]
+}
