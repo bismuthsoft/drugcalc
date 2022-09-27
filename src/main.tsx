@@ -3,10 +3,10 @@ import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider, Route } from 'react-router-dom';
 import App from './App';
 import Home from './routes/Home';
-import Recipes from './routes/Recipes';
-import RecipeEditor, {recipeLoader} from './routes/RecipeEditor';
-import Ingredients from './routes/Ingredients';
-import Containers from './routes/Containers';
+import Recipes, {loader as recipeListLoader} from './routes/Recipes';
+import RecipeEditor, {loader as recipeLoader} from './routes/RecipeEditor';
+import Ingredients, {loader as ingredientsLoader} from './routes/Ingredients';
+import Containers, {loader as containersLoader} from './routes/Containers';
 import './index.css';
 
 const router = createBrowserRouter([
@@ -20,19 +20,27 @@ const router = createBrowserRouter([
       },
       {
         path: "/recipes",
+        loader: recipeListLoader,
         element: <Recipes />,
       },
       {
-        path: "/recipes/edit/:recipeName",
+        path: "/recipes/:id",
+        loader: recipeLoader,
+        element: <RecipeEditor readOnly />,
+      },
+      {
+        path: "/recipes/:id/edit",
         loader: recipeLoader,
         element: <RecipeEditor />,
       },
       {
         path: "/ingredients",
+        loader: ingredientsLoader,
         element: <Ingredients />,
       },
       {
         path: "/containers",
+        loader: containersLoader,
         element: <Containers />,
       },
     ],

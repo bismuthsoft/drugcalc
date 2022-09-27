@@ -2,10 +2,17 @@
 
 #root {
   width: 100%;
-  padding: 24px;
   background: #fff;
+}
+
+.header {
+  position: sticky;
+  padding: 0 0;
 }
 
 .logo {
   float: left;
+  padding: 0 4em;
+  color: white;
+  font-weight: bold;
 }

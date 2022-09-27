@@ -7,13 +7,12 @@ const { Header, Content } = Layout;
 function App() {
   return (
     <>
-      <Layout>
-        <Header>
-          <div className="logo"
-               title="Drug Calculator">
-            DrugCalc
-          </div>
-          <Menu
+      <Header className="header">
+        <div className="logo"
+             title="Drug Calculator">
+          DrugCalc
+        </div>
+        <Menu
           className="header-menu"
           theme="dark"
           mode="horizontal"
@@ -31,8 +30,9 @@ function App() {
               label: <Link to="/containers">Containers</Link>,
             },
           ]}
-          />
-        </Header>
+        />
+      </Header>
+      <Layout>
         <Content><Outlet /></Content>
       </Layout>
     </>

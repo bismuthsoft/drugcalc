@@ -1,0 +1,27 @@
+[
+    {
+        "name": "Alpha GPC",
+        "density": "10",
+        "id": "1"
+    },
+    {
+        "name": "Creatine",
+        "density": "10",
+        "id": "2"
+    },
+    {
+        "name": "L-Theanine",
+        "density": "10",
+        "id": "3"
+    },
+    {
+        "name": "CBD",
+        "density": "10",
+        "id": "4"
+    },
+    {
+        "name": "Sugar",
+        "density": "10",
+        "id": "5"
+    }
+]

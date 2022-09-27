@@ -1,0 +1,12 @@
+[
+    {
+        "name": "00 Capsule",
+        "capacity": "1",
+        "unit": "ml"
+    },
+    {
+        "name": "0 Capsule",
+        "capacity": "2",
+        "unit": "ml"
+    }
+]
