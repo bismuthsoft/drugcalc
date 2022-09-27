@@ -1,0 +1,21 @@
+.ingredient {
+    display: flex;
+    flex-flow: row nowrap;
+}
+
+.ingredient__name {
+    flex-grow: 1;
+    margin-right: 1em;
+}
+
+.ingredient__quantity {
+    width: 5em;
+}
+
+.ingredient__unit {
+    width: 5em;
+}
+
+.ingredient__color {
+    width: 1em;
+}
