@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
 import './RecipeEditor.css';
 import { useLoaderData } from 'react-router-dom';
 import { Table, AutoComplete, InputNumber, Button } from 'antd';
 import { PlusSquareOutlined } from '@ant-design/icons';
 import UnitSelector from '../UnitSelector';
+
+type SetRecipe = Dispatch<SetStateAction<Recipe>>;
 
 const colors = [
     '#4cf', '#f8c', '#fc6', "#8f8"
@@ -32,7 +35,7 @@ type Props = {
 }
 
 const RecipeEditor: React.FC<Props> = ({readOnly}) => {
-    const {recipe: recipe_data, recipeList}: {recipe: Recipe, recipeList: any} = useLoaderData() as any;
+    const {recipe: recipe_data, recipeList}: {recipe: Recipe, recipeList: SetRecipe} = useLoaderData() as any;
     const [ recipe, setRecipe ] = useState(recipe_data);
 
     const allIngredients = recipeList.map(({name}: any) => ({value: name}));
@@ -81,25 +84,36 @@ const RecipeEditor: React.FC<Props> = ({readOnly}) => {
                    columns={ingredientsColumns}
                    rowKey="name"
                    footer={() =>
-                       <Button
-                           onClick={() => setRecipe({
-                               ...recipe,
-                               ingredients: [
-                                   ...recipe.ingredients,
-                                   {
-                                       name: 'Another One',
-                                       id: Math.random(),
-                                       quantity: 0,
-                                       unit: 'mg',
-                                   }
-                               ]
-                           })}
-                       ><PlusSquareOutlined /></Button>
+                       <IngredientsFooter {...{recipe, setRecipe}}/>
                    }
             />
             <div>RecipeEditor</div>
         </>
     );
+}
+
+type FooterProps = {
+    recipe: Recipe,
+    setRecipe: SetRecipe,
+}
+
+const IngredientsFooter: React.FC<FooterProps> = ({recipe, setRecipe}) => {
+    return (
+        <Button
+            onClick={() => setRecipe({
+                ...recipe,
+                ingredients: [
+                    ...recipe.ingredients,
+                    {
+                        name: 'Another One',
+                        id: Math.random(),
+                        quantity: 0,
+                        unit: 'mg',
+                    }
+                ]
+            })}
+        ><PlusSquareOutlined /></Button>
+    )
 }
 
 export async function loader() {
