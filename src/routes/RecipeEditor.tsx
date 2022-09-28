@@ -11,7 +11,7 @@ import FillBar from '../FillBar';
 type SetRecipe = Dispatch<SetStateAction<Recipe>>;
 
 const colors = [
-    '#4cf', '#f8c', '#fc6', "#8f8"
+    '#4cf', '#f8c', '#fc6', "#8f8", "#fc8",
 ];
 
 export type Recipe = {
@@ -164,13 +164,12 @@ const RecipeEditor: React.FC<Props> = ({readOnly}) => {
 
         setRecipe({
             ...recipe,
-            ingredients: [
-                ...nonFill,
-                ...fill.map((ingredient) => ({
-                    ...ingredient,
-                    quantity: Math.floor(remaining * getDensity(ingredient.id) / fill.length),
-                }))
-            ]
+            ingredients: recipe.ingredients.map((ingredient: Ingredient, index: number) => ({
+                ...ingredient,
+                quantity: selected[index] ?
+                          Math.floor(remaining * getDensity(ingredient.id) / fill.length) :
+                          ingredient.quantity,
+            })),
         });
 
         setSelected({});
