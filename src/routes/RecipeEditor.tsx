@@ -50,10 +50,11 @@ const RecipeEditor: React.FC<Props> = ({readOnly}) => {
     const ingredientsColumns = [
         {
             key: 'color',
+            dataIndex: 'id',
             width: 1,
-            render: (_:any, __:any, index: number) =>
+            render: (id:number) =>
                 <div className="ingredient__color"
-                style={{background: colors[index]}}/>,
+                style={{background: colors[id]}}/>,
         },
         {
             title: 'Name',
@@ -69,10 +70,19 @@ const RecipeEditor: React.FC<Props> = ({readOnly}) => {
             dataIndex: 'quantity',
             key: 'quantity',
             width: 1,
-            render: (quantity:number) =>
+            render: (quantity:number, row:Ingredient, index:number) =>
                 <InputNumber className="ingredient__quantity"
                              min={0} max={99999} step={10}
-                             value={quantity} />
+                             value={quantity}
+            onChange={(value: number | null) => value && setRecipe(() => ({
+                ...recipe,
+                ingredients: [
+                    ...recipe.ingredients.slice(0, index),
+                    {...row, quantity: value},
+                    ...recipe.ingredients.slice(index+1),
+                ],
+            }))}
+            />
         },
         {
 
