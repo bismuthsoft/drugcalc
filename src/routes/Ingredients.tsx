@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLoaderData } from 'react-router-dom';
-import { Table, InputNumber } from 'antd';
-import { EditOutlined } from '@ant-design/icons';
+import { Button, Table, InputNumber } from 'antd';
+import { SaveOutlined } from '@ant-design/icons';
 import './Ingredients.css';
 
 const Ingredients: React.FC = () => {
     const recipes: any = useLoaderData();
+    const [rowDirty, setRowDirty] = useState<Record<number, boolean>>({});
+
     const columns = [
         {
             title: 'Name',
@@ -17,9 +19,17 @@ const Ingredients: React.FC = () => {
             dataIndex: 'density',
             key: 'density',
             width: 1,
-            render: (density: number) => (
+            render: (density: number, row:any, index: number) => (
                 <div className="ingredients__actions">
-                    <InputNumber min={0} max={1000} value={density} />
+                    <InputNumber
+                        min={0}
+                        max={1000}
+                        value={density}
+                        onChange={(newValue) => {
+                            row.density = newValue;
+                            setRowDirty({...rowDirty, [index]: true})
+                        }}
+                    />
                 </div>
             )
         },
@@ -27,15 +37,26 @@ const Ingredients: React.FC = () => {
             title: 'Actions',
             key: 'actions',
             width: 1,
-            render: () => (
-                <EditOutlined />
+            render: (_: any, row: any, index: number) => (
+                <Button
+                  disabled={!rowDirty[index]}
+                  onClick={() => {
+
+                      setRowDirty({...rowDirty, [index]: false})
+                  }}>
+                    <SaveOutlined />
+                </Button>
             ),
         }
     ]
 
     return (
         <>
-            <Table dataSource={recipes} columns={columns}/>
+            <Table
+                dataSource={recipes}
+                columns={columns}
+                rowKey="id"
+            />
         </>
     );
 }
