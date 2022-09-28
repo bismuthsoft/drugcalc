@@ -20,6 +20,12 @@ const Recipes: React.FC = () => {
             key: 'name',
         },
         {
+            title: 'ID',
+            dataIndex: 'id',
+            key: 'id',
+            width: '4em',
+        },
+        {
             title: 'Actions',
             dataIndex: 'id',
             key: 'id',
@@ -36,7 +42,7 @@ const Recipes: React.FC = () => {
                         ...recipes.slice(0, index+1),
                         {
                             ...recipes[index],
-                            name: dedupRecipe(recipes, index),
+                            name: recipes[index].name,
                             id: Math.random(),
                         },
                         ...recipes.slice(index+1)
@@ -63,31 +69,32 @@ const Recipes: React.FC = () => {
     );
 }
 
-/* Given a list of recipes, create a name for the recipe at this index which
-   reflects how many copies were made prior (indicated by (copy X) at end of
-   name) */
-function dedupRecipe(recipes: Recipe[], index: number) {
-    const names = recipes.map(({name}) => name);
-    const name = names[index];
-
-    const splitName = (n: string) => {
-        const match = /^(.*)\(copy ([0-9]+)\)$/.exec(n);
-        return match ? match.slice(1) : [n, ''];
-    }
-
-    const getCopyNumber = (x: string) => Number(splitName(x)[1]) ?? 0;
-
-    const maxCopyNumber = names.reduce((acc, name) => {
-        const num = getCopyNumber(name);
-        return num > acc ? num : acc;
-    }, 0);
-
-    return `${splitName(name)[0]} (copy ${maxCopyNumber + 1})`;
-}
-
 export async function loader() {
     const recipes = await fetch("/api/recipes.json");
     return await recipes.json();
 }
 
 export default Recipes;
+
+/* Given a list of recipes, create a name for the recipe at this index which
+   reflects how many copies were made prior (indicated by (copy X) at end of
+   name) */
+/* function dedupRecipe(recipes: Recipe[], index: number) {
+ *     const names = recipes.map(({name}) => name);
+ *     const name = names[index];
+ *
+ *     const splitName = (n: string) => {
+ *         const match = /^(.*)\(copy ([0-9]+)\)$/.exec(n);
+ *         return match ? match.slice(1) : [n, ''];
+ *     }
+ *
+ *     const getCopyNumber = (x: string) => Number(splitName(x)[1]) ?? 0;
+ *
+ *     const maxCopyNumber = names.reduce((acc, name) => {
+ *         const num = getCopyNumber(name);
+ *         return num > acc ? num : acc;
+ *     }, 0);
+ *
+ *     return `${splitName(name)[0]} (copy ${maxCopyNumber + 1})`;
+ * }
+ *  */
