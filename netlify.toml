@@ -1,0 +1,5 @@
+[[redirects]]
+  from = "/search"
+  to = "http://drugcalc-env.eba-2sh2q8rp.us-east-1.elasticbeanstalk.com/api/"
+  status = 200
+  force = true
