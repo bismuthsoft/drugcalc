@@ -63,6 +63,14 @@ const RecipeEditor: React.FC<Props> = ({readOnly}) => {
                               options={allIngredients} />
         },
         {
+            title: 'Density',
+            dataIndex: 'id',
+            key: 'density',
+            width: 1,
+            render: (id: number) =>
+                <div>{ingredients.find((i) => i.id == id).density}mg/ml</div>
+        },
+        {
             title: 'Quantity',
             dataIndex: 'quantity',
             key: 'quantity',
