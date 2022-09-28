@@ -45,6 +45,8 @@ const RecipeEditor: React.FC<Props> = ({readOnly}) => {
     const allIngredients = ingredients.map(({name}: any) => ({value: name}));
     const allContainers = containers.map(({name}: any) => ({value: name}));
 
+    const getDensity = (id: number) => ingredients.find((x: Ingredient) => x.id == id).density;
+
     const ingredientsColumns = [
         {
             key: 'color',
@@ -70,7 +72,7 @@ const RecipeEditor: React.FC<Props> = ({readOnly}) => {
             render: (quantity:number) =>
                 <InputNumber className="ingredient__quantity"
                              min={0} max={99999} step={10}
-                             defaultValue={quantity} />
+                             value={quantity} />
         },
         {
 
@@ -87,7 +89,7 @@ const RecipeEditor: React.FC<Props> = ({readOnly}) => {
             key: 'fill',
             width: 1,
             render: (id: number, {quantity}: Ingredient) => {
-                const density = ingredients.find((i) => i.id == id).density;
+                const density = getDensity(id);
                 const fill = quantity / density;
                 return (
                     <div>{fill}ml <span style={{fontSize: '0.8em'}}>{density}mg/ml</span></div>
@@ -125,19 +127,44 @@ const RecipeEditor: React.FC<Props> = ({readOnly}) => {
         },
     ];
 
+
     const totalCapacity = recipe.containers.reduce((acc, {id, quantity}) =>
         acc + quantity * containers.find((x: Container) => x.id === id).capacity
     , 0);
 
-    const fills = recipe.ingredients.map(({id, quantity}: Ingredient) => {
-        const density = ingredients.find((x: Ingredient) => x.id == id).density;
-        const weight = quantity;
-        const volume = density / weight;
-        return volume / totalCapacity;
-    });
+    const calculateFills = (recipeIngredients: Ingredient[]) =>
+        recipeIngredients.map(({id, quantity}: Ingredient) => {
+            const density = getDensity(id);
+            const weight = quantity;
+            const volume = weight / density;
+            return volume / totalCapacity;
+        })
 
-    const totalFill = fills.reduce((acc, amount) => acc + amount, 0);
+    const total = (nums: number[]) => nums.reduce((acc, x) => acc + x, 0);
+
+    const fills = calculateFills(recipe.ingredients);
+    const totalFill = total(fills);
     const showActions = Object.values(selected).reduce((acc, v) => acc || v, false);
+
+    function applyFill() {
+        const nonFill = recipe.ingredients.filter((_,i) => !selected[i]);
+        const fill = recipe.ingredients.filter((_,i) => selected[i]);
+        const fillWithout = calculateFills(nonFill);
+        const remaining = (1.0 - total(fillWithout)) * totalCapacity;
+
+        setRecipe({
+            ...recipe,
+            ingredients: [
+                ...nonFill,
+                ...fill.map((ingredient) => ({
+                    ...ingredient,
+                    quantity: Math.floor(remaining * getDensity(ingredient.id) / fill.length),
+                }))
+            ]
+        });
+
+        setSelected({});
+    }
 
     return (
         <>
@@ -146,7 +173,7 @@ const RecipeEditor: React.FC<Props> = ({readOnly}) => {
                    columns={ingredientsColumns}
                    rowKey="name"
                    footer={() =>
-                       <IngredientsFooter {...{recipe, setRecipe, showActions}}/>
+                       <IngredientsFooter {...{recipe, setRecipe, showActions, applyFill}}/>
                    }
             />
             <Table dataSource={recipe.containers}
@@ -162,13 +189,14 @@ const RecipeEditor: React.FC<Props> = ({readOnly}) => {
     );
 }
 
-type FooterProps = {
+type IngredientsFooterProps = {
     recipe: Recipe,
     setRecipe: SetRecipe,
-    showActions?: boolean,
+    showActions: boolean,
+    applyFill: Function,
 }
 
-const IngredientsFooter: React.FC<FooterProps> = ({recipe, setRecipe, showActions}) => {
+const IngredientsFooter: React.FC<IngredientsFooterProps> = ({recipe, setRecipe, showActions, applyFill}) => {
     return (
         <div className="ingredients__footer">
         <Button onClick={() => setRecipe({
@@ -186,14 +214,19 @@ const IngredientsFooter: React.FC<FooterProps> = ({recipe, setRecipe, showAction
         ><PlusSquareOutlined /></Button>
          <div className="ingredients__actions">
              Actions:
-             <Button disabled={!showActions}>Fill</Button>
+             <Button disabled={!showActions} onClick={() => applyFill()}>Fill</Button>
              / <Button disabled={!showActions}>Delete</Button>
          </div>
         </div>
     )
 }
 
-const ContainersFooter: React.FC<FooterProps> = ({recipe, setRecipe}) => {
+type ContainersFooterProps = {
+    recipe: Recipe,
+    setRecipe: SetRecipe,
+}
+
+const ContainersFooter: React.FC<ContainersFooterProps> = ({recipe, setRecipe}) => {
     return (
         <Button
             onClick={() => setRecipe({
