@@ -62,8 +62,8 @@ const Ingredients: React.FC = () => {
 }
 
 export async function loader() {
-    const ingredients = await fetch("/api/ingredients.json");
-    return await ingredients.json();
+    const ingredients = await fetch("/api/ingredients");
+    return (await ingredients.json())._embedded.ingredients;
 }
 
 export default Ingredients;

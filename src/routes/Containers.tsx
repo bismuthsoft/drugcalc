@@ -50,8 +50,8 @@ const Ingredients: React.FC = () => {
 }
 
 export async function loader() {
-    const containers = await fetch("/api/containers.json");
-    return await containers.json();
+    const containers = await fetch("/api/containers/");
+    return (await containers.json())._embedded.containers;
 }
 
 export default Ingredients;
