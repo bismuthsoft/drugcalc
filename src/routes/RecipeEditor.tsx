@@ -35,10 +35,12 @@ type Props = {
 }
 
 const RecipeEditor: React.FC<Props> = ({readOnly}) => {
-    const {recipe: recipe_data, recipeList}: {recipe: Recipe, recipeList: SetRecipe} = useLoaderData() as any;
+    const {recipe: recipe_data, recipeList, containerList}: {recipe: Recipe, recipeList: any[], containerList: any[]} = useLoaderData() as any;
     const [ recipe, setRecipe ] = useState(recipe_data);
 
     const allIngredients = recipeList.map(({name}: any) => ({value: name}));
+    const allContainers = containerList.map(({name}: any) => ({value: name}));
+
     const ingredientsColumns = [
         {
             key: 'color',
@@ -51,11 +53,10 @@ const RecipeEditor: React.FC<Props> = ({readOnly}) => {
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
-            render: (name: string) => (
+            render: (name: string) =>
                 <AutoComplete className="ingredient__name"
                               value={name}
                               options={allIngredients} />
-            )
         },
         {
             title: 'Quantity',
@@ -76,7 +77,30 @@ const RecipeEditor: React.FC<Props> = ({readOnly}) => {
             render: (unit: string) =>
                 <UnitSelector unit={unit} />,
         }
-    ]
+    ];
+
+    const containersColumns = [
+        {
+            title: 'Name',
+            dataIndex: 'name',
+            key: 'name',
+            render: (name: string) =>
+                <AutoComplete className="container__name"
+                              value={name}
+                              options={allContainers} />
+        },
+        {
+            title: 'Quantity',
+            dataIndex: 'quantity',
+            key: 'quantity',
+            width: 1,
+            render: (quantity:number) =>
+                <InputNumber className="container__quantity"
+                             min={0} max={10} step={1}
+                             defaultValue={quantity} />
+        },
+    ];
+
     return (
         <>
             <div>Name: {recipe.name}</div>
@@ -85,6 +109,13 @@ const RecipeEditor: React.FC<Props> = ({readOnly}) => {
                    rowKey="name"
                    footer={() =>
                        <IngredientsFooter {...{recipe, setRecipe}}/>
+                   }
+            />
+            <Table dataSource={recipe.containers}
+                   columns={containersColumns}
+                   rowKey="name"
+                   footer={() =>
+                       <ContainersFooter {...{recipe, setRecipe}}/>
                    }
             />
             <div>RecipeEditor</div>
@@ -116,12 +147,33 @@ const IngredientsFooter: React.FC<FooterProps> = ({recipe, setRecipe}) => {
     )
 }
 
+const ContainersFooter: React.FC<FooterProps> = ({recipe, setRecipe}) => {
+    return (
+        <Button
+            onClick={() => setRecipe({
+                ...recipe,
+                containers: [
+                    ...recipe.containers,
+                    {
+                        name: 'Empty Thing',
+                        id: Math.random(),
+                        quantity: 1,
+                        unit: 'mg',
+                    }
+                ]
+            })}
+        ><PlusSquareOutlined /></Button>
+    )
+}
+
 export async function loader() {
     const recipe = await fetch("/api/recipes/0.json");
     const ingredients = await fetch("/api/ingredients.json");
+    const containers = await fetch("/api/containers.json");
     return {
         recipe: await recipe.json(),
-        recipeList: await ingredients.json()
+        recipeList: await ingredients.json(),
+        containerList: await containers.json()
     };
 }
 
