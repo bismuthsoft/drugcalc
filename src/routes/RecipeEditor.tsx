@@ -214,8 +214,8 @@ const IngredientsFooter: React.FC<IngredientsFooterProps> = ({recipe, setRecipe,
                 ...recipe.ingredients,
                 {
                     name: 'Another One',
-                    id: Math.random(),
-                    quantity: 0,
+                    id: 1,
+                    quantity: 100,
                     unit: 'mg',
                 }
             ]
@@ -258,7 +258,7 @@ export async function loader() {
     const ingredients = await fetch("/static-api/ingredients.json");
     const containers = await fetch("/static-api/containers.json");
 
-    const recipe = {
+    const recipe = (await recipeJson.json())?._embedded?._recipes?.[0] || {
         name: 'Empty Recipe',
         ingredients: [],
         containers: [],
