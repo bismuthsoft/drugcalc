@@ -32,7 +32,7 @@ function App() {
           ]}
         />
       </Header>
-      <Layout>
+      <Layout style={{ padding: '2rem' }}>
         <Content><Outlet /></Content>
       </Layout>
     </>
