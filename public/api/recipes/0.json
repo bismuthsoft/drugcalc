@@ -28,6 +28,7 @@
     ],
     "containers": [
         {
+            "id": 0,
             "name": "00 Capsule",
             "quantity": 2
         }

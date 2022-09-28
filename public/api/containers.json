@@ -1,12 +1,14 @@
 [
     {
-        "name": "00 Capsule",
-        "capacity": "1",
-        "unit": "ml"
+      "id": 0,
+      "name": "00 Capsule",
+      "capacity": "1",
+      "unit": "ml"
     },
     {
-        "name": "0 Capsule",
-        "capacity": "2",
-        "unit": "ml"
+      "id": 1,
+      "name": "0 Capsule",
+      "capacity": "2",
+      "unit": "ml"
     }
 ]
