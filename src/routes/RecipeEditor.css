@@ -1,17 +1,14 @@
-.ingredient {
-    display: flex;
-    flex-flow: row nowrap;
-}
-
 .ingredient__name {
-    flex-grow: 1;
-    margin-right: 1em;
+    width: 100%;
 }
-
 .ingredient__quantity {
     width: 5em;
 }
 
 .ingredient__color {
+    display: block;
+    background: green;
+    height: 1em;
     width: 1em;
+    border-radius: 0.5em;
 }
