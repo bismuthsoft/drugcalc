@@ -70,8 +70,8 @@ const Recipes: React.FC = () => {
 }
 
 export async function loader() {
-    const recipes = await fetch("/api/recipes");
-    return (await recipes.json())._embedded.recipes;
+    const recipes = await fetch("/static-api/recipes.json");
+    return await recipes.json();
 }
 
 export default Recipes;

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import type { Dispatch, SetStateAction } from 'react';
 import './RecipeEditor.css';
 import { useLoaderData } from 'react-router-dom';
@@ -23,7 +22,7 @@ export type Recipe = {
 
 export type Ingredient = {
     name: string,
-    ingredientId: number,
+    id: number,
     quantity: number,
     unit: string,
 };
@@ -46,7 +45,7 @@ const RecipeEditor: React.FC<Props> = ({readOnly}) => {
     const allIngredients = ingredients.map(({name}: any) => ({value: name}));
     const allContainers = containers.map(({name}: any) => ({value: name}));
 
-    const getDensity = (id: number) => ingredients.find((x: Ingredient) => x.ingredientId == id).density;
+    const getDensity = (id: number) => ingredients.find((x: Ingredient) => x.id == id).density;
 
     const ingredientsColumns = [
         {
@@ -144,7 +143,7 @@ const RecipeEditor: React.FC<Props> = ({readOnly}) => {
     , 0);
 
     const calculateFills = (recipeIngredients: Ingredient[]) =>
-        recipeIngredients.map(({ingredientId: id, quantity}: Ingredient) => {
+        recipeIngredients.map(({id, quantity}: Ingredient) => {
             const density = getDensity(id);
             const weight = quantity;
             const volume = weight / density;
@@ -168,7 +167,7 @@ const RecipeEditor: React.FC<Props> = ({readOnly}) => {
             ingredients: recipe.ingredients.map((ingredient: Ingredient, index: number) => ({
                 ...ingredient,
                 quantity: selected[index] ?
-                          Math.floor(remaining * getDensity(ingredient.ingredientId) / fill.length) :
+                          Math.floor(remaining * getDensity(ingredient.id) / fill.length) :
                           ingredient.quantity,
             })),
         });
@@ -215,7 +214,7 @@ const IngredientsFooter: React.FC<IngredientsFooterProps> = ({recipe, setRecipe,
                 ...recipe.ingredients,
                 {
                     name: 'Another One',
-                    ingredientId: Math.random(),
+                    id: Math.random(),
                     quantity: 0,
                     unit: 'mg',
                 }
@@ -256,10 +255,10 @@ const ContainersFooter: React.FC<ContainersFooterProps> = ({recipe, setRecipe}) 
 
 export async function loader() {
     const recipeJson = await fetch("/api/recipes/");
-    const ingredients = await fetch("/api/ingredients");
-    const containers = await fetch("/api/containers");
+    const ingredients = await fetch("/static-api/ingredients.json");
+    const containers = await fetch("/static-api/containers.json");
 
-    const recipe = (await recipeJson.json())?._embedded?._recipes?.[0] || {
+    const recipe = {
         name: 'Empty Recipe',
         ingredients: [],
         containers: [],
@@ -267,8 +266,8 @@ export async function loader() {
 
     return {
         recipe,
-        ingredients: (await ingredients.json())._embedded.ingredients,
-        containers: (await containers.json())._embedded.containers,
+        ingredients: await ingredients.json(),
+        containers: await containers.json()
     };
 }
 
