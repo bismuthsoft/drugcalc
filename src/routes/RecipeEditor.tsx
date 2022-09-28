@@ -5,6 +5,7 @@ import { useLoaderData } from 'react-router-dom';
 import { Table, AutoComplete, InputNumber, Button } from 'antd';
 import { PlusSquareOutlined } from '@ant-design/icons';
 import UnitSelector from '../UnitSelector';
+import FillBar from '../FillBar';
 
 type SetRecipe = Dispatch<SetStateAction<Recipe>>;
 
@@ -12,21 +13,22 @@ const colors = [
     '#4cf', '#f8c', '#fc6', "#8f8"
 ];
 
-type Recipe = {
+export type Recipe = {
     name: string,
     ingredients: Ingredient[],
     containers: Container[],
 }
 
-type Ingredient = {
+export type Ingredient = {
     name: string,
     id: number,
     quantity: number,
     unit: string,
 };
 
-type Container = {
+export type Container = {
     name: string,
+    id: number,
     quantity: number,
 }
 
@@ -35,11 +37,11 @@ type Props = {
 }
 
 const RecipeEditor: React.FC<Props> = ({readOnly}) => {
-    const {recipe: recipe_data, recipeList, containerList}: {recipe: Recipe, recipeList: any[], containerList: any[]} = useLoaderData() as any;
+    const {recipe: recipe_data, ingredients, containers}: {recipe: Recipe, ingredients: any[], containers: any[]} = useLoaderData() as any;
     const [ recipe, setRecipe ] = useState(recipe_data);
 
-    const allIngredients = recipeList.map(({name}: any) => ({value: name}));
-    const allContainers = containerList.map(({name}: any) => ({value: name}));
+    const allIngredients = ingredients.map(({name}: any) => ({value: name}));
+    const allContainers = containers.map(({name}: any) => ({value: name}));
 
     const ingredientsColumns = [
         {
@@ -101,6 +103,19 @@ const RecipeEditor: React.FC<Props> = ({readOnly}) => {
         },
     ];
 
+    const totalCapacity = recipe.containers.reduce((acc, {id, quantity}) =>
+        acc + quantity * containers.find((x: Container) => x.id === id).capacity
+    , 0);
+
+    const fills = recipe.ingredients.map(({id, quantity}: Ingredient) => {
+        const density = ingredients.find((x: Ingredient) => x.id == id).density;
+        const weight = quantity;
+        const volume = density / weight;
+        return volume / totalCapacity;
+    });
+
+    const totalFill = fills.reduce((acc, amount) => acc + amount, 0);
+
     return (
         <>
             <div>Name: {recipe.name}</div>
@@ -119,6 +134,7 @@ const RecipeEditor: React.FC<Props> = ({readOnly}) => {
                    }
             />
             <div>RecipeEditor</div>
+            <FillBar {...{fills, totalFill, colors}} />
         </>
     );
 }
@@ -158,7 +174,6 @@ const ContainersFooter: React.FC<FooterProps> = ({recipe, setRecipe}) => {
                         name: 'Empty Thing',
                         id: Math.random(),
                         quantity: 1,
-                        unit: 'mg',
                     }
                 ]
             })}
@@ -172,8 +187,8 @@ export async function loader() {
     const containers = await fetch("/api/containers.json");
     return {
         recipe: await recipe.json(),
-        recipeList: await ingredients.json(),
-        containerList: await containers.json()
+        ingredients: await ingredients.json(),
+        containers: await containers.json()
     };
 }
 
