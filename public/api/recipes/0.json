@@ -3,21 +3,25 @@
     "ingredients": [
         {
             "name": "Alpha GPC",
+            "id": 0,
             "quantity": 200,
             "unit": "mg"
         },
         {
             "name": "Creatine",
+            "id": 1,
             "quantity": 400,
             "unit": "mg"
         },
         {
             "name": "L-Theanine",
+            "id": 2,
             "quantity": 100,
             "unit": "mg"
         },
         {
             "name": "Sugar",
+            "id": 3,
             "quantity": 50,
             "unit": "mg"
         }
