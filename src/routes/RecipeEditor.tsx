@@ -133,7 +133,7 @@ const RecipeEditor: React.FC<Props> = ({readOnly}) => {
                        <ContainersFooter {...{recipe, setRecipe}}/>
                    }
             />
-            <div>RecipeEditor</div>
+            <div>Fill: {Math.floor(totalFill * 100)}% ({totalCapacity * totalFill}ml/{totalCapacity}ml)</div>
             <FillBar {...{fills, totalFill, colors}} />
         </>
     );
