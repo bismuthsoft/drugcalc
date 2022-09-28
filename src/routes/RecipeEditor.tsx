@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
 import './RecipeEditor.css';
 import { useLoaderData } from 'react-router-dom';
-import { Table, AutoComplete, InputNumber, Button } from 'antd';
+import { Table, AutoComplete, InputNumber, Button, Checkbox } from 'antd';
+import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { PlusSquareOutlined } from '@ant-design/icons';
 import UnitSelector from '../UnitSelector';
 import FillBar from '../FillBar';
@@ -39,6 +40,7 @@ type Props = {
 const RecipeEditor: React.FC<Props> = ({readOnly}) => {
     const {recipe: recipe_data, ingredients, containers}: {recipe: Recipe, ingredients: any[], containers: any[]} = useLoaderData() as any;
     const [ recipe, setRecipe ] = useState(recipe_data);
+    const [ selected, setSelected ] = useState<Record<number, boolean>>({});
 
     const allIngredients = ingredients.map(({name}: any) => ({value: name}));
     const allContainers = containers.map(({name}: any) => ({value: name}));
@@ -78,6 +80,13 @@ const RecipeEditor: React.FC<Props> = ({readOnly}) => {
             width: 1,
             render: (unit: string) =>
                 <UnitSelector unit={unit} />,
+        },
+        {
+            key: 'selected',
+            width: 1,
+            render: (_:any, __:any, index: number) =>
+                <Checkbox onChange={(e: CheckboxChangeEvent) =>
+                    setSelected({...selected, [index]: e.target.checked})}/>
         }
     ];
 
@@ -115,6 +124,7 @@ const RecipeEditor: React.FC<Props> = ({readOnly}) => {
     });
 
     const totalFill = fills.reduce((acc, amount) => acc + amount, 0);
+    const showActions = Object.values(selected).reduce((acc, v) => acc || v, false);
 
     return (
         <>
@@ -123,7 +133,7 @@ const RecipeEditor: React.FC<Props> = ({readOnly}) => {
                    columns={ingredientsColumns}
                    rowKey="name"
                    footer={() =>
-                       <IngredientsFooter {...{recipe, setRecipe}}/>
+                       <IngredientsFooter {...{recipe, setRecipe, showActions}}/>
                    }
             />
             <Table dataSource={recipe.containers}
@@ -142,24 +152,31 @@ const RecipeEditor: React.FC<Props> = ({readOnly}) => {
 type FooterProps = {
     recipe: Recipe,
     setRecipe: SetRecipe,
+    showActions?: boolean,
 }
 
-const IngredientsFooter: React.FC<FooterProps> = ({recipe, setRecipe}) => {
+const IngredientsFooter: React.FC<FooterProps> = ({recipe, setRecipe, showActions}) => {
     return (
-        <Button
-            onClick={() => setRecipe({
-                ...recipe,
-                ingredients: [
-                    ...recipe.ingredients,
-                    {
-                        name: 'Another One',
-                        id: Math.random(),
-                        quantity: 0,
-                        unit: 'mg',
-                    }
-                ]
-            })}
+        <div className="ingredients__footer">
+        <Button onClick={() => setRecipe({
+            ...recipe,
+            ingredients: [
+                ...recipe.ingredients,
+                {
+                    name: 'Another One',
+                    id: Math.random(),
+                    quantity: 0,
+                    unit: 'mg',
+                }
+            ]
+        })}
         ><PlusSquareOutlined /></Button>
+         <div className="ingredients__actions">
+             Actions:
+             <Button disabled={!showActions}>Fill</Button>
+             / <Button disabled={!showActions}>Delete</Button>
+         </div>
+        </div>
     )
 }
 

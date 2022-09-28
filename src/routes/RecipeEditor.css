@@ -14,6 +14,12 @@
     border-radius: 0.5em;
 }
 
+.ingredients__footer {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+}
+
 .container__name {
     width: 100%;
 }
