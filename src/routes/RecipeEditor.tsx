@@ -63,14 +63,6 @@ const RecipeEditor: React.FC<Props> = ({readOnly}) => {
                               options={allIngredients} />
         },
         {
-            title: 'Density',
-            dataIndex: 'id',
-            key: 'density',
-            width: 1,
-            render: (id: number) =>
-                <div>{ingredients.find((i) => i.id == id).density}mg/ml</div>
-        },
-        {
             title: 'Quantity',
             dataIndex: 'quantity',
             key: 'quantity',
@@ -88,6 +80,19 @@ const RecipeEditor: React.FC<Props> = ({readOnly}) => {
             width: 1,
             render: (unit: string) =>
                 <UnitSelector unit={unit} />,
+        },
+        {
+            title: 'Volume',
+            dataIndex: 'id',
+            key: 'fill',
+            width: 1,
+            render: (id: number, {quantity}: Ingredient) => {
+                const density = ingredients.find((i) => i.id == id).density;
+                const fill = quantity / density;
+                return (
+                    <div>{fill}ml <span style={{fontSize: '0.8em'}}>{density}mg/ml</span></div>
+                )
+            }
         },
         {
             key: 'selected',
