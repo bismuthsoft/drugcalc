@@ -1,3 +1,48 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@import 'antd/dist/antd.css';
+
+#root {
+  width: 100%;
+  background: #fff;
+}
+
+.header {
+  position: sticky;
+  padding: 0 0;
+}
+
+.logo {
+  float: left;
+  padding: 0 4em;
+  color: white;
+  font-weight: bold;
+}
+
+main {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+
+.unitSelector {
+    width: 5em;
+}
+
+.fillBar {
+  display: flex;
+  flex-flow: row nowrap;
+  border: 1px solid black;
+  height: 2em;
+}
+
+.fillBar__entry {
+  height: 2em;
+}
+
+.fillBar__padding {
+  height: 2em;
+}

@@ -7,16 +7,49 @@ import superjson from "superjson";
 import type { AppType } from "next/app";
 import type { AppRouter } from "../server/router";
 import type { Session } from "next-auth";
+import { Layout, Menu } from 'antd'
+import Link from 'next/link'
 import "../styles/globals.css";
 
+const { Header, Content } = Layout;
+
 const MyApp: AppType<{ session: Session | null }> = ({
-  Component,
-  pageProps: { session, ...pageProps },
+    Component,
+    pageProps: { session, ...pageProps },
 }) => {
   return (
-    <SessionProvider session={session}>
-      <Component {...pageProps} />
-    </SessionProvider>
+        <SessionProvider session={session}>
+            <Header className="header">
+                <div className="logo"
+                    title="Drug Calculator">
+                    DrugCalc
+                </div>
+                <Menu
+                    className="header-menu"
+                    theme="dark"
+                    mode="horizontal"
+                    items={[
+                        {
+                            key: 1,
+                            label: <Link href="/recipes"><a>Recipes</a></Link>,
+                        },
+                        {
+                            key: 2,
+                            label: <Link href="/ingredients"><a>Ingredients</a></Link>,
+                        },
+                        {
+                            key: 3,
+                            label: <Link href="/containers"><a>Containers</a></Link>,
+                        },
+                    ]}
+                />
+            </Header>
+            <Layout style={{ padding: '2rem' }}>
+                <Content>
+                    <Component {...pageProps} />
+                </Content>
+            </Layout>
+    </SessionProvider >
   );
 };
 
