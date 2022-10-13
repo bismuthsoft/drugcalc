@@ -1,13 +1,17 @@
-import React from 'react';
-import './Containers.css';
-import { useLoaderData } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
 import { Table, InputNumber } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
-import UnitSelector from '../UnitSelector';
-
+import UnitSelector from '../components/UnitSelector';
 
 const Ingredients: React.FC = () => {
-    const containers: any = useLoaderData();
+    const [containers, setContainers] = useState([]);
+
+    useEffect(() => {
+        loader().then(value => {
+            setContainers(value)
+        });
+    });
+
     const columns = [
         {
             title: 'Name',
