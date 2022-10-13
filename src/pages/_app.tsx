@@ -11,6 +11,7 @@ import { Layout, Menu } from 'antd'
 import Link from 'next/link'
 import "../styles/globals.css";
 import "../styles/Ingredients.css";
+import '../styles/Recipes.css';
 
 const { Header, Content } = Layout;
 

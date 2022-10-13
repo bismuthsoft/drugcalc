@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
-import { Link, useLoaderData } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { Table, Button } from 'antd';
 import { EditOutlined, InfoCircleOutlined, CopyOutlined, PlusSquareOutlined } from '@ant-design/icons';
-import './Recipes.css';
 
 type Recipe = {
     name: string,
@@ -10,8 +9,13 @@ type Recipe = {
 }
 
 const Recipes: React.FC = () => {
-    const recipes_data: Recipe[] = useLoaderData() as any;
-    const [ recipes, setRecipes ] = useState(recipes_data);
+    const [ recipes, setRecipes ] = useState([]);
+
+    useEffect(() => {
+        loader().then(value => {
+            setRecipes(value)
+        });
+    });
 
     const columns = [
         {
@@ -33,10 +37,10 @@ const Recipes: React.FC = () => {
             render: (id: string, row: Recipe, index: number) => (
                 <div className="recipes__actions">
                     <Button>
-                        <Link to={`/recipes/${id}`}><InfoCircleOutlined/></Link>
+                        <Link href={`/recipes/${id}`}><a><InfoCircleOutlined/></a></Link>
                     </Button>
                     <Button>
-                        <Link to={`/recipes/${id}/edit`}><EditOutlined/></Link>
+                        <Link href={`/recipes/${id}/edit`}><a><EditOutlined/></a></Link>
                     </Button>
                     <Button onClick={() => setRecipes([
                         ...recipes.slice(0, index+1),
