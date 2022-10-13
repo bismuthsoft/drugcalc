@@ -1,12 +1,16 @@
-import React, { useState } from 'react';
-import { useLoaderData } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
 import { Button, Table, InputNumber } from 'antd';
 import { SaveOutlined } from '@ant-design/icons';
-import './Ingredients.css';
 
 const Ingredients: React.FC = () => {
-    const recipes: any = useLoaderData();
+    const [recipes, setRecipes] = useState();
     const [rowDirty, setRowDirty] = useState<Record<number, boolean>>({});
+
+    useEffect(() => {
+        loader().then(value => {
+            setRecipes(value)
+        });
+    });
 
     const columns = [
         {

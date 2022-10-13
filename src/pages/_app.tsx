@@ -10,6 +10,7 @@ import type { Session } from "next-auth";
 import { Layout, Menu } from 'antd'
 import Link from 'next/link'
 import "../styles/globals.css";
+import "../styles/Ingredients.css";
 
 const { Header, Content } = Layout;
 
