@@ -1,21 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { Table, Button } from 'antd';
 import { EditOutlined, InfoCircleOutlined, CopyOutlined, PlusSquareOutlined } from '@ant-design/icons';
+import { useLoaderDataMutable } from '../utils/utils';
 
 type Recipe = {
     name: string,
     id: number,
 }
 
-const Recipes: React.FC = () => {
-    const [ recipes, setRecipes ] = useState([]);
-
-    useEffect(() => {
-        loader().then(value => {
-            setRecipes(value)
-        });
-    });
+const Recipes: React.FC = () =>{
+    const [ recipes, setRecipes ] = useLoaderDataMutable(loader, []);
 
     const columns = [
         {

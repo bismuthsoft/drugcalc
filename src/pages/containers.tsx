@@ -2,15 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Table, InputNumber } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
 import UnitSelector from '../components/UnitSelector';
+import { useLoaderDataMutable } from '../utils/utils';
 
 const Ingredients: React.FC = () => {
-    const [containers, setContainers] = useState([]);
-
-    useEffect(() => {
-        loader().then(value => {
-            setContainers(value)
-        });
-    });
+    const [containers] = useLoaderDataMutable(loader, []);
 
     const columns = [
         {
