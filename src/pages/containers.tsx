@@ -1,11 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Table, InputNumber } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
 import UnitSelector from '../components/UnitSelector';
-import { useLoaderDataMutable } from '../utils/utils';
+import { fetchJson } from '../utils/utils';
 
-const Ingredients: React.FC = () => {
-    const [containers] = useLoaderDataMutable(loader, []);
+type Props = {
+    containers: any[]
+};
+
+export async function getServerSideProps() {
+    const containers = await fetchJson("/static-api/containers.json");
+    const props: Props = { containers };
+    return { props };
+}
+
+const Ingredients: React.FC<Props> = ({ containers }) => {
 
     const columns = [
         {
@@ -46,11 +55,6 @@ const Ingredients: React.FC = () => {
             <Table dataSource={containers} columns={columns}/>
         </>
     );
-}
-
-export async function loader() {
-    const containers = await fetch("/static-api/containers.json");
-    return await containers.json();
 }
 
 export default Ingredients;

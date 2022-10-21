@@ -1,10 +1,19 @@
 import React, { useState } from 'react';
 import { Button, Table, InputNumber } from 'antd';
 import { SaveOutlined } from '@ant-design/icons';
-import { useLoaderDataMutable } from '../utils/utils';
+import { fetchJson } from '../utils/utils';
 
-const Ingredients: React.FC = () => {
-    const [recipes] = useLoaderDataMutable(loader, []);
+type Props = {
+    ingredients: any[],
+}
+
+export async function getServerSideProps() {
+    const ingredients = await fetchJson("/static-api/ingredients.json");
+    const props: Props = { ingredients };
+    return { props };
+}
+
+const Ingredients: React.FC<Props> = ({ ingredients }) => {
     const [rowDirty, setRowDirty] = useState<Record<number, boolean>>({});
 
     const columns = [
@@ -52,17 +61,12 @@ const Ingredients: React.FC = () => {
     return (
         <>
             <Table
-                dataSource={recipes}
+                dataSource={ingredients}
                 columns={columns}
                 rowKey="id"
             />
         </>
     );
-}
-
-export async function loader() {
-    const ingredients = await fetch("/static-api/ingredients.json");
-    return await ingredients.json();
 }
 
 export default Ingredients;

@@ -1,16 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { Table, Button } from 'antd';
 import { EditOutlined, InfoCircleOutlined, CopyOutlined, PlusSquareOutlined } from '@ant-design/icons';
-import { useLoaderDataMutable } from '../utils/utils';
+import { fetchJson } from '../utils/utils';
 
 type Recipe = {
     name: string,
     id: number,
 }
 
-const Recipes: React.FC = () =>{
-    const [ recipes, setRecipes ] = useLoaderDataMutable(loader, []);
+type Props = {
+    recipes: Recipe[],
+}
+
+export async function getServerSideProps() {
+    const recipes = await fetchJson("/static-api/recipes.json");
+    const props: Props = { recipes };
+    return { props };
+}
+
+const Recipes: React.FC<Props> = ({ recipes: initialRecipes }) => {
+    const [recipes, setRecipes] = useState(initialRecipes);
 
     const columns = [
         {
@@ -66,11 +76,6 @@ const Recipes: React.FC = () =>{
             />
         </>
     );
-}
-
-export async function loader() {
-    const recipes = await fetch("/static-api/recipes.json");
-    return await recipes.json();
 }
 
 export default Recipes;
