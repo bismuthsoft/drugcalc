@@ -24,10 +24,11 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <SessionProvider session={session}>
             <Layout className="min-h-screen">
                 <Header className="header">
-                    <div className="logo"
-                        title="stack.recipes">
-                        Stack Recipes
-                    </div>
+                    <Link href="/">
+                        <a className="logo hover:text-white">
+                            Stack Recipes
+                        </a>
+                    </Link>
                     <Menu
                         className="header-menu"
                         theme="dark"
