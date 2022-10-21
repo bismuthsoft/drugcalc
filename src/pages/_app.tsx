@@ -20,40 +20,42 @@ const MyApp: AppType<{ session: Session | null }> = ({
     Component,
     pageProps: { session, ...pageProps },
 }) => {
-  return (
+    return (
         <SessionProvider session={session}>
-            <Header className="header">
-                <div className="logo"
-                    title="stack.recipes">
-                    Stack Recipes
-                </div>
-                <Menu
-                    className="header-menu"
-                    theme="dark"
-                    mode="horizontal"
-                    items={[
-                        {
-                            key: 1,
-                            label: <Link href="/recipes"><a>Recipes</a></Link>,
-                        },
-                        {
-                            key: 2,
-                            label: <Link href="/ingredients"><a>Ingredients</a></Link>,
-                        },
-                        {
-                            key: 3,
-                            label: <Link href="/containers"><a>Containers</a></Link>,
-                        },
-                    ]}
-                />
-            </Header>
-            <Layout style={{ padding: '2rem' }}>
-                <Content>
-                    <Component {...pageProps} />
-                </Content>
+            <Layout className="min-h-screen">
+                <Header className="header">
+                    <div className="logo"
+                        title="stack.recipes">
+                        Stack Recipes
+                    </div>
+                    <Menu
+                        className="header-menu"
+                        theme="dark"
+                        mode="horizontal"
+                        items={[
+                            {
+                                key: 1,
+                                label: <Link href="/recipes"><a>Recipes</a></Link>,
+                            },
+                            {
+                                key: 2,
+                                label: <Link href="/ingredients"><a>Ingredients</a></Link>,
+                            },
+                            {
+                                key: 3,
+                                label: <Link href="/containers"><a>Containers</a></Link>,
+                            },
+                        ]}
+                    />
+                </Header>
+                <Layout style={{ padding: '2rem' }}>
+                    <Content>
+                        <Component {...pageProps} />
+                    </Content>
+                </Layout>
             </Layout>
-    </SessionProvider >
-  );
+        </SessionProvider >
+    );
 };
 
 const getBaseUrl = () => {
