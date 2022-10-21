@@ -24,8 +24,8 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <SessionProvider session={session}>
             <Header className="header">
                 <div className="logo"
-                    title="Drug Calculator">
-                    DrugCalc
+                    title="stack.recipes">
+                    Stack Recipes
                 </div>
                 <Menu
                     className="header-menu"
