@@ -45,7 +45,7 @@ const Ingredients: React.FC<Props> = ({ containers }) => {
             key: 'actions',
             width: 1,
             render: () => (
-                <EditOutlined />
+                <EditOutlined title="edit" />
             ),
         }
     ]

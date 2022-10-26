@@ -52,7 +52,7 @@ const Ingredients: React.FC<Props> = ({ ingredients }) => {
 
                       setRowDirty({...rowDirty, [index]: false})
                   }}>
-                    <SaveOutlined />
+                    <SaveOutlined title="Save" />
                 </Button>
             ),
         }
