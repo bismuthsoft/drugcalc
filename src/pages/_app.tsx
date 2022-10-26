@@ -25,10 +25,8 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <SessionProvider session={session}>
             <Layout className="min-h-screen">
                 <Header className="header">
-                    <Link href="/">
-                        <a className="logo hover:text-white">
-                            Stack Recipes
-                        </a>
+                    <Link href="/" className="logo hover:text-white">
+                        Stack Recipes
                     </Link>
                     <Menu
                         className="header-menu"
@@ -37,15 +35,15 @@ const MyApp: AppType<{ session: Session | null }> = ({
                         items={[
                             {
                                 key: 1,
-                                label: <Link href="/recipes"><a>Recipes</a></Link>,
+                                label: <Link href="/recipes">Recipes</Link>,
                             },
                             {
                                 key: 2,
-                                label: <Link href="/ingredients"><a>Ingredients</a></Link>,
+                                label: <Link href="/ingredients">Ingredients</Link>,
                             },
                             {
                                 key: 3,
-                                label: <Link href="/containers"><a>Containers</a></Link>,
+                                label: <Link href="/containers">Containers</Link>,
                             },
                         ]}
                     />

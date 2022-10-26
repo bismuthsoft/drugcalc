@@ -42,10 +42,10 @@ const Recipes: React.FC<Props> = ({ recipes: initialRecipes }) => {
             render: (id: string, row: Recipe, index: number) => (
                 <div className="recipes__actions">
                     <Button>
-                        <Link href={`/recipes/${id}`}><a><InfoCircleOutlined/></a></Link>
+                        <Link href={`/recipes/${id}`}><InfoCircleOutlined/></Link>
                     </Button>
                     <Button>
-                        <Link href={`/recipes/${id}/edit`}><a><EditOutlined/></a></Link>
+                        <Link href={`/recipes/${id}/edit`}><EditOutlined/></Link>
                     </Button>
                     <Button onClick={() => setRecipes([
                         ...recipes.slice(0, index+1),
