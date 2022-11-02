@@ -1,14 +1,11 @@
 import React, { useState } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
-import './RecipeEditor.css';
-import { useLoaderData } from 'react-router-dom';
 import { Table, AutoComplete, InputNumber, Button, Checkbox } from 'antd';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { PlusSquareOutlined } from '@ant-design/icons';
-import UnitSelector from '../UnitSelector';
-import FillBar from '../FillBar';
-
-type SetRecipe = Dispatch<SetStateAction<Recipe>>;
+import UnitSelector from '../../components/UnitSelector';
+import FillBar from '../../components/FillBar';
+import { fetchJson } from '../../utils/utils';
 
 const colors = [
     '#4cf', '#f8c', '#fc6', "#8f8", "#fc8",
@@ -16,36 +13,58 @@ const colors = [
 
 export type Recipe = {
     name: string,
-    ingredients: Ingredient[],
-    containers: Container[],
+    ingredients: RecipeIngredient[],
+    containers: RecipeContainer[],
 }
 
-export type Ingredient = {
+export type RecipeIngredient = {
     name: string,
     id: number,
     quantity: number,
     unit: string,
 };
 
-export type Container = {
+export type RecipeContainer = {
     name: string,
     id: number,
     quantity: number,
 }
 
-type Props = {
-    readOnly?: boolean,
+export type Ingredient = {
+    name: string,
+    density: number,
+    id: number,
 }
 
-const RecipeEditor: React.FC<Props> = ({readOnly}) => {
-    const {recipe: recipe_data, ingredients, containers}: {recipe: Recipe, ingredients: any[], containers: any[]} = useLoaderData() as any;
-    const [ recipe, setRecipe ] = useState(recipe_data);
+export type Container = {
+    name: string,
+    capacity: number,
+    unit: string,
+    id: number,
+}
+
+type Props = {
+    recipe: Recipe,
+    ingredients: Ingredient[],
+    containers: Container[],
+}
+
+export async function getServerSideProps() {
+    const recipe = await fetchJson("/static-api/recipes/0.json");
+    const ingredients = await fetchJson("/static-api/ingredients.json");
+    const containers = await fetchJson("/static-api/containers.json");
+    const props: Props = { recipe, ingredients, containers };
+    return { props };
+}
+
+const RecipeEditor: React.FC<Props> = ({recipe: recipe_data, ingredients, containers}) => {
+    const [ recipe, setRecipe ] = useState<Recipe>(recipe_data);
     const [ selected, setSelected ] = useState<Record<number, boolean>>({});
 
-    const allIngredients = ingredients.map(({name}: any) => ({value: name}));
-    const allContainers = containers.map(({name}: any) => ({value: name}));
+    const allIngredients = ingredients.map(({name}) => ({value: name}));
+    const allContainers = containers.map(({name}) => ({value: name}));
 
-    const getDensity = (id: number) => ingredients.find((x: Ingredient) => x.id == id).density;
+    const getDensity = (id: number) => ingredients.find((x: Ingredient) => x.id == id)?.density ?? NaN;
 
     const ingredientsColumns = [
         {
@@ -70,19 +89,21 @@ const RecipeEditor: React.FC<Props> = ({readOnly}) => {
             dataIndex: 'quantity',
             key: 'quantity',
             width: 1,
-            render: (quantity:number, row:Ingredient, index:number) =>
+            render: (quantity:number, row:RecipeIngredient, index:number) =>
                 <InputNumber className="ingredient__quantity"
                              min={0} max={99999} step={10}
                              value={quantity}
-            onChange={(value: number | null) => value && setRecipe(() => ({
-                ...recipe,
-                ingredients: [
-                    ...recipe.ingredients.slice(0, index),
-                    {...row, quantity: value},
-                    ...recipe.ingredients.slice(index+1),
-                ],
-            }))}
-            />
+                    onChange={(value: number | null) => {
+                        value && setRecipe({
+                            ...recipe,
+                            ingredients: [
+                                ...recipe.ingredients.slice(0, index),
+                                { ...row, quantity: value as number },
+                                ...recipe.ingredients.slice(index + 1),
+                            ],
+                        })
+                    }}
+                />
         },
         {
 
@@ -98,7 +119,7 @@ const RecipeEditor: React.FC<Props> = ({readOnly}) => {
             dataIndex: 'id',
             key: 'fill',
             width: 1,
-            render: (id: number, {quantity}: Ingredient) => {
+            render: (id: number, {quantity}: RecipeIngredient) => {
                 const density = getDensity(id);
                 const fill = quantity / density;
                 return (
@@ -139,11 +160,11 @@ const RecipeEditor: React.FC<Props> = ({readOnly}) => {
 
 
     const totalCapacity = recipe.containers.reduce((acc, {id, quantity}) =>
-        acc + quantity * containers.find((x: Container) => x.id === id).capacity
+        acc + quantity * (containers.find((x: Container) => x.id === id)?.capacity ?? 0)
     , 0);
 
-    const calculateFills = (recipeIngredients: Ingredient[]) =>
-        recipeIngredients.map(({id, quantity}: Ingredient) => {
+    const calculateFills = (recipeIngredients: RecipeIngredient[]) =>
+        recipeIngredients.map(({id, quantity}: RecipeIngredient) => {
             const density = getDensity(id);
             const weight = quantity;
             const volume = weight / density;
@@ -164,7 +185,7 @@ const RecipeEditor: React.FC<Props> = ({readOnly}) => {
 
         setRecipe({
             ...recipe,
-            ingredients: recipe.ingredients.map((ingredient: Ingredient, index: number) => ({
+            ingredients: recipe.ingredients.map((ingredient: RecipeIngredient, index: number) => ({
                 ...ingredient,
                 quantity: selected[index] ?
                           Math.floor(remaining * getDensity(ingredient.id) / fill.length) :
@@ -200,9 +221,9 @@ const RecipeEditor: React.FC<Props> = ({readOnly}) => {
 
 type IngredientsFooterProps = {
     recipe: Recipe,
-    setRecipe: SetRecipe,
+    setRecipe: Dispatch<SetStateAction<Recipe>>,
     showActions: boolean,
-    applyFill: Function,
+    applyFill: () => void,
 }
 
 const IngredientsFooter: React.FC<IngredientsFooterProps> = ({recipe, setRecipe, showActions, applyFill}) => {
@@ -232,7 +253,7 @@ const IngredientsFooter: React.FC<IngredientsFooterProps> = ({recipe, setRecipe,
 
 type ContainersFooterProps = {
     recipe: Recipe,
-    setRecipe: SetRecipe,
+    setRecipe: Dispatch<SetStateAction<Recipe>>,
 }
 
 const ContainersFooter: React.FC<ContainersFooterProps> = ({recipe, setRecipe}) => {
@@ -251,24 +272,6 @@ const ContainersFooter: React.FC<ContainersFooterProps> = ({recipe, setRecipe}) 
             })}
         ><PlusSquareOutlined /></Button>
     )
-}
-
-export async function loader() {
-    const recipeJson = await fetch("/api/recipes/");
-    const ingredients = await fetch("/static-api/ingredients.json");
-    const containers = await fetch("/static-api/containers.json");
-
-    const recipe = (await recipeJson.json())?._embedded?._recipes?.[0] || {
-        name: 'Empty Recipe',
-        ingredients: [],
-        containers: [],
-    };
-
-    return {
-        recipe,
-        ingredients: await ingredients.json(),
-        containers: await containers.json()
-    };
 }
 
 export default RecipeEditor;
