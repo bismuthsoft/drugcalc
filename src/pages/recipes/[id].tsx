@@ -71,12 +71,12 @@ const RecipeEditor: React.FC<Props> = ({recipe: recipe_data, ingredients, contai
             key: 'color',
             dataIndex: 'id',
             width: 1,
-            render: (id:number) =>
+            render: (id: number) =>
                 <div className="ingredient__color"
                 style={{background: colors[id]}}/>,
         },
         {
-            title: 'Name',
+            title: 'Ingredient',
             dataIndex: 'name',
             key: 'name',
             render: (name: string) =>
@@ -138,7 +138,7 @@ const RecipeEditor: React.FC<Props> = ({recipe: recipe_data, ingredients, contai
 
     const containersColumns = [
         {
-            title: 'Name',
+            title: 'Container',
             dataIndex: 'name',
             key: 'name',
             render: (name: string) =>
